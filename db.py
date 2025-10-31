@@ -45,3 +45,5 @@ class Database:
 
     def buscar(self, termo):
         self.cursor.execute("""select * from diario where titulo like ? or conteudo like ?""", ('%' + termo + '%', '%' + termo + '%'))
+        self.conn.commit
+        return self.cursor.fetchall()

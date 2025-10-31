@@ -14,34 +14,39 @@ class Diario:
         
 
     def tela(self):
-        tk.Label(self.display, text="Diário Godostories", font=("Arial", 40)).place(relx=0.5, rely=0.1, anchor="center")
+        tk.Label(self.display, text="Diário Suas Histórias", font=("Arial", 40)).place(relx=0.5, rely=0.1, anchor="center")
 
-        self.titulo=tk.Entry(self.display, width=20, font=("Arial", 20))
+        self.titulo=tk.Entry(self.display, width=20, font=("Arial", 20), bootstyle='info')
         self.titulo.place(relx=0.3, rely=0.3, anchor="center")
 
         tk.Label(self.display, text="Título", font=("Arial", 20)).place(relx=0.15, rely=0.3, anchor="center")
         tk.Label(self.display, text="Data", font=("Arial", 20)).place(relx=0.15, rely=0.38, anchor="center")
-        tk.Label(self.display, text="Conteúdo", font=("Arial", 20)).place(relx=0.15, rely=0.54, anchor="center")
+        tk.Label(self.display, text="Conteúdo", font=("Arial", 20)).place(relx=0.13, rely=0.54, anchor="center")
         
         self.data=tk.DateEntry(self.display, bootstyle="info")
         self.data.place(relx=0.3, rely=0.38, anchor="center", width=455)
-        self.conteudo=tk.Text(self.display, width=20, height=5, font=("Arial", 20))
+        self.conteudo=tk.Text(self.display, width=40, height=10, font=("Arial", 10))
         self.conteudo.place(relx=0.3, rely=0.54, anchor="center")
-        self.buscar=tk.Entry(self.display, width=20,font=("arial", 20))
-        self.buscar.place(relx=0.7, rely=0.2, anchor="center")
+        self.buscar_entry=tk.Entry(self.display, width=20,font=("arial", 20), bootstyle='info')
+        self.buscar_entry.place(relx=0.7, rely=0.2, anchor="center")
 
-        tk.Button(self.display, text="Salvar", width=10, padding=(20, 10), command=self.salvar).place(relx=0.26, rely=0.7, anchor="center")
-        tk.Button(self.display, text="Editar", width=10, padding=(20, 10), command=self.editar).place(relx=0.34, rely=0.7, anchor="center")
-        tk.Button(self.display, text="Excluir", width=10, padding=(20, 10), command=self.excluir).place(relx=0.26, rely=0.77, anchor="center")
-        tk.Button(self.display, text="Buscar", width=4, padding=(20, 10), command=self.buscar).place(relx=0.86, rely=0.2, anchor="center")
+        tk.Button(self.display, text="Salvar", width=10,bootstyle='success', padding=(20, 10), command=self.salvar).place(relx=0.26, rely=0.7, anchor="center")
+        tk.Button(self.display, text="Editar", width=10,bootstyle='info', padding=(20, 10), command=self.editar).place(relx=0.34, rely=0.7, anchor="center")
+        tk.Button(self.display, text="Excluir",bootstyle='danger', width=25, padding=(20, 10), command=self.excluir).place(relx=0.3, rely=0.77, anchor="center")
+        tk.Button(self.display, text="Buscar", width=5,bootstyle='info', padding=(20, 10), command=self.buscar).place(relx=0.86, rely=0.2, anchor="center")
 
-        self.tree = tk.Treeview(self.display,height=25, columns=("titulo", "data", "conteudo"),show="headings")
+        self.tree = tk.Treeview(self.display,height=25, columns=("titulo", "data", "conteudo"),show="headings", bootstyle='info')
+        self.tree.column("titulo", width=300, anchor="w")
+        self.tree.column("data", width=105, anchor="center")
+        self.tree.column("conteudo", width=400, anchor="w")
         self.tree.column("#0", width=0, stretch=tk.NO)
         self.tree.heading("titulo", text="Título")
         self.tree.heading("data", text="Data")
         self.tree.heading("conteudo", text="Conteúdo")
         self.tree.place(relx=0.7, rely=0.6, anchor="center")
         self.tree.bind('<<TreeviewSelect>>', self.selecionar_item)
+
+
 
 
     def carregar_dados(self):
@@ -78,7 +83,7 @@ class Diario:
 
     def selecionar_item(self, event):
         self.limpar_campos()
-        item_selecionado_id = self.tree.focus()  # pega o iid (que agora é o id do banco)
+        item_selecionado_id = self.tree.focus()
 
         if item_selecionado_id:
             self.id_selecionado = int(item_selecionado_id)
@@ -121,26 +126,20 @@ class Diario:
          self.data.entry.delete(0, tk.END)
     
     def buscar(self):
-            
-        termo = self.titulo.get().strip()  # usa o campo de título como filtro
+        termo = self.buscar_entry.get().strip().lower()
 
-        # limpa a Treeview antes de mostrar resultados
-        for item in self.tree.get_children():
-            self.tree.delete(item)
-
-        # se não digitou nada, recarrega todos os dados
         if not termo:
             self.carregar_dados()
             return
 
-        # filtra os dados que já estão no banco
-        resultados = self.db_manager.listar_entrada_tb()
-        resultados_filtrados = [r for r in resultados if termo.lower() in r[1].lower()]
-
-        for r in resultados_filtrados:
-            self.tree.insert(parent="", index="end", iid=r[0], values=r[1:])
-
-        print(f"{len(resultados_filtrados)} resultado(s) encontrado(s).")
+        for item in self.tree.get_children():
+            valores = self.tree.item(item, "values")
+            titulo = valores[0].lower()
+            conteudo = valores[2].lower()
+            if termo in titulo or termo in conteudo:
+                self.tree.item(item, open=True) 
+            else:
+                self.tree.delete(item)
 
     def run(self):
         self.display.mainloop()
