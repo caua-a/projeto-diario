@@ -33,7 +33,7 @@ class Diario:
         tk.Button(self.display, text="Salvar", width=10, padding=(20, 10), command=self.salvar).place(relx=0.26, rely=0.7, anchor="center")
         tk.Button(self.display, text="Editar", width=10, padding=(20, 10), command=self.editar).place(relx=0.34, rely=0.7, anchor="center")
         tk.Button(self.display, text="Excluir", width=10, padding=(20, 10), command=self.excluir).place(relx=0.26, rely=0.77, anchor="center")
-        tk.Button(self.display, text="Buscar", width=4, padding=(20, 10)).place(relx=0.86, rely=0.2, anchor="center")
+        tk.Button(self.display, text="Buscar", width=4, padding=(20, 10), command=self.buscar).place(relx=0.86, rely=0.2, anchor="center")
 
         self.tree = tk.Treeview(self.display,height=25, columns=("titulo", "data", "conteudo"),show="headings")
         self.tree.column("#0", width=0, stretch=tk.NO)
@@ -121,7 +121,27 @@ class Diario:
          self.data.entry.delete(0, tk.END)
     
     def buscar(self):
-        pass
+            
+        termo = self.titulo.get().strip()  # usa o campo de título como filtro
+
+        # limpa a Treeview antes de mostrar resultados
+        for item in self.tree.get_children():
+            self.tree.delete(item)
+
+        # se não digitou nada, recarrega todos os dados
+        if not termo:
+            self.carregar_dados()
+            return
+
+        # filtra os dados que já estão no banco
+        resultados = self.db_manager.listar_entrada_tb()
+        resultados_filtrados = [r for r in resultados if termo.lower() in r[1].lower()]
+
+        for r in resultados_filtrados:
+            self.tree.insert(parent="", index="end", iid=r[0], values=r[1:])
+
+        print(f"{len(resultados_filtrados)} resultado(s) encontrado(s).")
+
     def run(self):
         self.display.mainloop()
 
