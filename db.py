@@ -36,10 +36,12 @@ class Database:
 
     def atualizar_entrada_db(self, id, titulo, data, conteudo):
         self.cursor.execute("""
-            UPDATE diario SET titulo = ?, data = ?, conteudo = ? WHERE id = ?
-        """, (titulo, data, conteudo, id))
+            UPDATE diario SET titulo = ?, data = ?, conteudo = ? WHERE id = ?;""", (titulo, data, conteudo, id))
         self.conn.commit()
     
-    def exluir_dados(self, id_selecionado):
-        self.cursor.execute("""delete from diario where id = ? ;""", (id_selecionado))
+    def excluir_dados(self, id_selecionado):
+        self.cursor.execute("""delete from diario where id = ? ;""", (id_selecionado,))
         self.conn.commit()
+
+    def buscar(self, termo):
+        self.cursor.execute("""select * from diario where titulo like ? or conteudo like ?""", ('%' + termo + '%', '%' + termo + '%'))
