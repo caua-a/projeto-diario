@@ -14,7 +14,7 @@ class Diario:
         
 
     def tela(self):
-        tk.Label(self.display, text="Diário Suas Histórias", font=("Arial", 40)).place(relx=0.5, rely=0.1, anchor="center")
+        tk.Label(self.display, text="Diário Godostories", font=("Arial", 40)).place(relx=0.5, rely=0.1, anchor="center")
 
         self.titulo=tk.Entry(self.display, width=20, font=("Arial", 20), bootstyle='info')
         self.titulo.place(relx=0.3, rely=0.3, anchor="center")
@@ -24,7 +24,7 @@ class Diario:
         tk.Label(self.display, text="Conteúdo", font=("Arial", 20)).place(relx=0.13, rely=0.54, anchor="center")
         
         self.data=tk.DateEntry(self.display, bootstyle="info")
-        self.data.place(relx=0.3, rely=0.38, anchor="center", width=455)
+        self.data.place(relx=0.3, rely=0.38, anchor="center", width=300)
         self.conteudo=tk.Text(self.display, width=40, height=10, font=("Arial", 10))
         self.conteudo.place(relx=0.3, rely=0.54, anchor="center")
         self.buscar_entry=tk.Entry(self.display, width=20,font=("arial", 20), bootstyle='info')
@@ -33,7 +33,7 @@ class Diario:
         tk.Button(self.display, text="Salvar", width=10,bootstyle='success', padding=(20, 10), command=self.salvar).place(relx=0.26, rely=0.7, anchor="center")
         tk.Button(self.display, text="Editar", width=10,bootstyle='info', padding=(20, 10), command=self.editar).place(relx=0.34, rely=0.7, anchor="center")
         tk.Button(self.display, text="Excluir",bootstyle='danger', width=25, padding=(20, 10), command=self.excluir).place(relx=0.3, rely=0.77, anchor="center")
-        tk.Button(self.display, text="Buscar", width=5,bootstyle='info', padding=(20, 10), command=self.buscar).place(relx=0.86, rely=0.2, anchor="center")
+        tk.Button(self.display, text="Buscar", width=5,bootstyle='info', padding=(20, 10), command=self.buscar).place(relx=0.81, rely=0.2, anchor="center")
 
         self.tree = tk.Treeview(self.display,height=25, columns=("titulo", "data", "conteudo"),show="headings", bootstyle='info')
         self.tree.column("titulo", width=300, anchor="w")
@@ -59,9 +59,8 @@ class Diario:
                 db_id = i[0]
                 colunas=i[1:]
                 self.tree.insert(parent="", index="end",iid=db_id, values=colunas)
-            print("Atualização certa")
         else:
-            print("Sem atualização")
+            None
                 
         
 
@@ -143,8 +142,3 @@ class Diario:
 
     def run(self):
         self.display.mainloop()
-
-
-if __name__=="__main__":
-    app = Diario()
-    app.run()
