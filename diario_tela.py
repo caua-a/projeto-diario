@@ -71,11 +71,10 @@ class Diario:
 
         if titulo and conteudo:
             self.db_manager.inserir_dados_db(titulo, data, conteudo)
-            print("nova entrada salva com sucesso!")
             self.carregar_dados()
             self.limpar_campos()
         else:
-            print("preencha todos os campos antes de salvar")
+            None
 
     
 
@@ -97,14 +96,12 @@ class Diario:
 
     def excluir(self):
             if not hasattr(self, 'id_selecionado') or not self.id_selecionado:
-                print("Nenhum item selecionado")
                 return  
             self.db_manager.excluir_dados(self.id_selecionado)
             self.carregar_dados()
 
     def editar(self):
         if not hasattr(self, 'id_selecionado') or not self.id_selecionado:
-            print("Nenhum item selecionado")
             return
 
         titulo_editado = self.titulo.get()
@@ -113,10 +110,8 @@ class Diario:
 
         if titulo_editado and conteudo_editado:
             self.db_manager.atualizar_entrada_db(self.id_selecionado, titulo_editado, data_editada, conteudo_editado)
-            print(f"ID {self.id_selecionado} atualizado ")
         else:
-            print("Os campos estão vazios")
-            
+            None
         self.carregar_dados()
 
     def limpar_campos(self):
